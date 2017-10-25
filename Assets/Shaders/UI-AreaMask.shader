@@ -69,6 +69,7 @@ Shader "UI/AreaMask"
 				fixed4 color    : COLOR;
 				float4 worldPosition : TEXCOORD0;
 				float2 clipPosition : TEXCOORD1;
+				//float3 projDir : TEXCOORD2;
 			};
 			
 			fixed4 _Color;
@@ -77,6 +78,7 @@ Shader "UI/AreaMask"
 
 			float4x4 internalWorldToMaskMatrix;
 			half2 internalClipAtten;
+			//half4 internalRect;
 
 			sampler2D _MaskTex;
 			float4 _Offset;
@@ -95,6 +97,8 @@ Shader "UI/AreaMask"
 
 				float4 clipPos = mul(internalWorldToMaskMatrix, IN.vertex);
 				OUT.clipPosition = clipPos.xy / clipPos.w;
+				//OUT.projDir = normalize(mul(internalWorldToMaskMatrix, float4(0,0,-1,0))).xyz;
+
 				return OUT;
 			}
 
@@ -105,7 +109,12 @@ Shader "UI/AreaMask"
 
 				half4 color = IN.color;
 
+				//half2 pjpos = (dot(half3(0, 0, 1), IN.projDir) / IN.clipPosition.z*IN.projDir + IN.clipPosition).xy;
+				//half2 pjpos = IN.clipPosition.xy;
+				//pjpos = (pjpos - internalRect.xy) / internalRect.zw;
+
 				half2 atten = 1-saturate((abs(IN.clipPosition.xy - half2(0.5, 0.5)) - internalClipAtten.x) / (0.5 - internalClipAtten.x));
+				//half2 atten = 1 - saturate((abs(pjpos - half2(0.5, 0.5)) - internalClipAtten.x) / (0.5 - internalClipAtten.x));
 
 				//fixed4 colP = tex2D(_MaskTex, IN.clipPosition.xy*_Offset.xy + _Offset.zw);
 				//colP.rgb = 1 - colP.rgb;

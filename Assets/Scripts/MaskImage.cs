@@ -15,7 +15,6 @@ public class MaskImage : Image
     }
 
     public bool useRaycastMask = true;
-    //public float raycastAtten = 0;
 
     private float m_Atten;
     private Matrix4x4 m_MaskAreaMatrix;
@@ -155,7 +154,7 @@ public class MaskImage : Image
     }
 
     /// <summary>
-    /// 设置跟随蒙版
+    /// 设置跟随蒙版-跟随蒙版会随着蒙版目标的移动和旋转自动调整蒙版位置
     /// </summary>
     /// <param name="color">蒙版颜色</param>
     /// <param name="atten">衰减(1-0  1表示不衰减  0表示完全衰减)</param>
@@ -166,7 +165,7 @@ public class MaskImage : Image
     }
 
     /// <summary>
-    /// 设置跟随蒙版
+    /// 设置跟随蒙版-跟随蒙版会随着蒙版目标的移动和旋转自动调整蒙版位置
     /// </summary>
     /// <param name="color">蒙版颜色</param>
     /// <param name="atten">衰减(1-0  1表示不衰减  0表示完全衰减)</param>
@@ -257,7 +256,22 @@ public class MaskImage : Image
         m_MaskAreaMatrix.m11 = 1 / targetTransform.rect.height;
         m_MaskAreaMatrix.m13 = -targetTransform.rect.y / targetTransform.rect.height;
         m_MaskAreaMatrix.m33 = 1;
-        m_MaskAreaMatrix = m_MaskAreaMatrix * targetTransform.worldToLocalMatrix * canvas.transform.localToWorldMatrix;
+        
+        Matrix4x4 ltw = default(Matrix4x4);
+        ltw.m00 = targetTransform.right.x;
+        ltw.m01 = targetTransform.up.x;
+        ltw.m03 = targetTransform.position.x;
+
+        ltw.m10 = targetTransform.right.y;
+        ltw.m11 = targetTransform.up.y;
+        ltw.m13 = targetTransform.position.y;
+        
+        ltw.m22 = 1;
+        ltw.m23 = targetTransform.position.z;
+        
+        ltw.m33 = 1;
+
+        m_MaskAreaMatrix = m_MaskAreaMatrix * ltw.inverse * canvas.transform.localToWorldMatrix;
         if (m_OriginMaskAreaMatrix != m_MaskAreaMatrix)
         {
             material.SetMatrix("internalWorldToMaskMatrix", m_MaskAreaMatrix);
