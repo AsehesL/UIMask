@@ -48,7 +48,7 @@ Shader "UI/AreaMask"
 
 		Pass
 		{
-		CGPROGRAM
+			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 
@@ -93,7 +93,7 @@ Shader "UI/AreaMask"
 				
 				OUT.color = IN.color * _Color;
 
-				float4 clipPos = mul(internalWorldToMaskMatrix, IN.vertex);
+				float4 clipPos = mul(internalWorldToMaskMatrix, IN.vertex);//顶点转入蒙版区域空间（该空间会将坐标规范化，如果xy坐标在蒙版空间内则必然为0-1内）
 				OUT.clipPosition = clipPos.xy / clipPos.w;
 
 				return OUT;
@@ -104,7 +104,7 @@ Shader "UI/AreaMask"
 
 				half4 color = IN.color;
 
-				half2 atten = 1-saturate((abs(IN.clipPosition.xy - half2(0.5, 0.5)) - internalClipAtten.x) / (0.5 - internalClipAtten.x));
+				half2 atten = 1-saturate((abs(IN.clipPosition.xy - half2(0.5, 0.5)) - internalClipAtten.x) / (0.5 - internalClipAtten.x));//根据蒙版区域坐标计算边缘柔和
 
 				color.a *= 1-saturate(atten.x*atten.y* tex2D(_MaskTex, IN.clipPosition.xy*_Offset.xy+_Offset.zw).a)*internalClipAtten.y;
 				
@@ -116,7 +116,7 @@ Shader "UI/AreaMask"
 
 				return color;
 			}
-		ENDCG
+			ENDCG
 		}
 	}
 }

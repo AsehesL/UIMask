@@ -218,10 +218,10 @@ public class MaskImage : Image
         {
             material.SetTexture("_MaskTex", sprite.texture);
 
-            float w = sprite.rect.width/sprite.texture.width;
-            float h = sprite.rect.height/sprite.texture.height;
-            float x = (sprite.textureRect.x - sprite.textureRectOffset.x)/sprite.texture.width;
-            float y = (sprite.textureRect.y - sprite.textureRectOffset.y)/sprite.texture.height;
+            float w = sprite.rect.width / sprite.texture.width;
+            float h = sprite.rect.height / sprite.texture.height;
+            float x = (sprite.textureRect.x - sprite.textureRectOffset.x) / sprite.texture.width;
+            float y = (sprite.textureRect.y - sprite.textureRectOffset.y) / sprite.texture.height;
 
             material.SetVector("_Offset", new Vector4(w, h, x, y));
             //this.sprite = sprite;
